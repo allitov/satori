@@ -1,0 +1,31 @@
+#!/bin/bash
+
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+apply_spotless() {
+  echo -e "${GREEN} Checking Java files before commit...${NC}"
+
+  mapfile -t FILES < <(git diff --cached --name-only --diff-filter=ACM "*.java")
+
+  if [ ${#FILES[@]} -eq 0 ]; then
+    echo "No modified Java files found. Skipping."
+    exit 0
+  fi
+
+  echo "Formatting ${#FILES[@]} file(s)..."
+
+  if ./gradlew spotlessApply > /dev/null 2>&1; then
+    echo -e "${GREEN} Code formatted successfully!${NC}"
+    git add "${FILES[@]}"
+  else
+    echo -e "${RED} Error during spotlessApply execution${NC}"
+    echo "Try running './gradlew spotlessApply' manually for debugging."
+    exit 1
+  fi
+}
+
+apply_spotless
+
+exit 0
