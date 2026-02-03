@@ -24,6 +24,7 @@ subprojects {
             removeUnusedImports()
             trimTrailingWhitespace()
             endWithNewline()
+            target("**/*.java")
             targetExclude("**/build/**", "**/generated-sources/**", "**/generated/**")
         }
     }
